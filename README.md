@@ -6,6 +6,8 @@ Tuckfill is a Chrome extension for the text you keep typing into forms: test ema
 
 > This guide also ships inside the Tuckfill zip as `PANDUAN.html` (Indonesian). It opens offline and prints to PDF.
 
+> 📖 Prefer browsing page by page? Read the **[Wiki](https://github.com/rmaw22/tuckfill-docs/wiki)**.
+
 **Contents:** [1. Install](#1-install) · [2. Getting started](#2-getting-started) · [3. Turn on for a site](#3-turn-on-for-a-site) · [4. Fill a field](#4-fill-a-field) · [5. Sets](#5-sets-fill-several-fields-at-once) · [6. Touch ID, auto-lock & backup](#6-touch-id-auto-lock--backup) · [7. Report a bug](#7-report-a-bug) · [Limits & FAQ](#limits--faq)
 
 ---
