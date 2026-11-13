@@ -1,12 +1,34 @@
-# Tuckfill Guide
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="images/logo-dark.png">
+    <img src="images/logo-light.png" alt="Tuckfill" width="280">
+  </picture>
+</h1>
 
-[English](README.md) · **Bahasa Indonesia**
+<p align="center">
+  <b>Type it once. Use it constantly. Keep it safe.</b><br>
+  Simpan teks yang sering kamu ketik di form, lalu isi lewat tombol kecil di dalam field.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/status-beta-ff9a3d" alt="Status: beta">
+  <img src="https://img.shields.io/badge/Chrome-Manifest%20V3-2f4fa8" alt="Chrome Manifest V3">
+  <img src="https://img.shields.io/badge/network%20requests-none-1c7c4e" alt="No network requests">
+  <img src="https://img.shields.io/badge/size-52%20KB%20gzipped-2f4fa8" alt="Size: 52 KB gzipped">
+  <img src="https://img.shields.io/badge/license-MIT-131a2e" alt="License: MIT">
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> · <b>Bahasa Indonesia</b> · <a href="https://github.com/rmaw22/tuckfill-docs/wiki/Home-(ID)">Wiki</a>
+</p>
+
+<p align="center">
+  <img src="images/picker-set.jpg" alt="Picker Tuckfill terbuka di bawah field Corporate ID, menawarkan set yang mengisi tiga field" width="440">
+</p>
 
 Tuckfill adalah Chrome extension untuk teks yang sering kamu ketik di form: email test, password, alamat, template. Simpan sekali, lalu isi field mana pun lewat tombol kecil di dalam field-nya. Semua data tersimpan **terenkripsi di laptop kamu sendiri** dan nggak dikirim ke mana pun.
 
 > Panduan ini juga ada di dalam zip Tuckfill sebagai `PANDUAN.html`. Bisa dibuka offline dan di-print ke PDF.
-
-> 📖 Lebih enak dibaca per halaman? Buka **[Wiki](https://github.com/rmaw22/tuckfill-docs/wiki/Home-(ID))**.
 
 **Contents:** [1. Install](#1-install) · [2. Getting started](#2-getting-started) · [3. Turn on for a site](#3-turn-on-for-a-site) · [4. Fill a field](#4-fill-a-field) · [5. Sets](#5-sets-fill-several-fields-at-once) · [6. Touch ID, auto-lock & backup](#6-touch-id-auto-lock--backup) · [7. Report a bug](#7-report-a-bug) · [Limits & FAQ](#limits--faq)
 
