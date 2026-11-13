@@ -1,12 +1,34 @@
-# Tuckfill Guide
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="images/logo-dark.png">
+    <img src="images/logo-light.png" alt="Tuckfill" width="280">
+  </picture>
+</h1>
 
-**English** · [Bahasa Indonesia](README.id.md)
+<p align="center">
+  <b>Type it once. Use it constantly. Keep it safe.</b><br>
+  Saves the text you keep typing into forms and fills it from a small button inside the field.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/status-beta-ff9a3d" alt="Status: beta">
+  <img src="https://img.shields.io/badge/Chrome-Manifest%20V3-2f4fa8" alt="Chrome Manifest V3">
+  <img src="https://img.shields.io/badge/network%20requests-none-1c7c4e" alt="No network requests">
+  <img src="https://img.shields.io/badge/size-52%20KB%20gzipped-2f4fa8" alt="Size: 52 KB gzipped">
+  <img src="https://img.shields.io/badge/license-MIT-131a2e" alt="License: MIT">
+</p>
+
+<p align="center">
+  <b>English</b> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="https://github.com/rmaw22/tuckfill-docs/wiki">Wiki</a>
+</p>
+
+<p align="center">
+  <img src="images/picker-set.jpg" alt="The Tuckfill picker open under a Corporate ID field, offering a set that fills three fields" width="440">
+</p>
 
 Tuckfill is a Chrome extension for the text you keep typing into forms: test emails, passwords, addresses, templates. Save it once, then fill any field from a small button inside it. Everything is stored **encrypted on your own computer** and never sent anywhere.
 
 > This guide also ships inside the Tuckfill zip as `PANDUAN.html` (Indonesian). It opens offline and prints to PDF.
-
-> 📖 Prefer browsing page by page? Read the **[Wiki](https://github.com/rmaw22/tuckfill-docs/wiki)**.
 
 **Contents:** [1. Install](#1-install) · [2. Getting started](#2-getting-started) · [3. Turn on for a site](#3-turn-on-for-a-site) · [4. Fill a field](#4-fill-a-field) · [5. Sets](#5-sets-fill-several-fields-at-once) · [6. Touch ID, auto-lock & backup](#6-touch-id-auto-lock--backup) · [7. Report a bug](#7-report-a-bug) · [Limits & FAQ](#limits--faq)
 
