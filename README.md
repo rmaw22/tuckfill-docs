@@ -12,9 +12,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-beta-ff9a3d" alt="Status: beta">
-  <img src="https://img.shields.io/badge/Chrome-Manifest%20V3-2f4fa8" alt="Chrome Manifest V3">
+  <img src="https://img.shields.io/badge/Chrome%20·%20Firefox%20·%20Safari-Manifest%20V3-2f4fa8" alt="Chrome, Firefox and Safari, Manifest V3">
   <img src="https://img.shields.io/badge/network%20requests-none-1c7c4e" alt="No network requests">
-  <img src="https://img.shields.io/badge/size-52%20KB%20gzipped-2f4fa8" alt="Size: 52 KB gzipped">
+  <img src="https://img.shields.io/badge/size-54%20KB%20gzipped-2f4fa8" alt="Size: 54 KB gzipped">
   <img src="https://img.shields.io/badge/license-MIT-131a2e" alt="License: MIT">
 </p>
 
@@ -26,7 +26,7 @@
   <img src="images/picker-set.jpg" alt="The Tuckfill picker open under a Corporate ID field, offering a set that fills three fields" width="440">
 </p>
 
-Tuckfill is a Chrome extension for the text you keep typing into forms: test emails, passwords, addresses, templates. Save it once, then fill any field from a small button inside it. Everything is stored **encrypted on your own computer** and never sent anywhere.
+Tuckfill is a browser extension (Chrome, Firefox, Safari) for the text you keep typing into forms: test emails, passwords, addresses, templates. Save it once, then fill any field from a small button inside it. Everything is stored **encrypted on your own computer** and never sent anywhere.
 
 > This guide also ships inside the Tuckfill zip as `PANDUAN.html` (Indonesian). It opens offline and prints to PDF.
 
@@ -44,6 +44,10 @@ Tuckfill is a Chrome extension for the text you keep typing into forms: test ema
 <img src="images/install.jpg" width="720" alt="chrome://extensions with Developer mode on and the Tuckfill card">
 
 > **Updating:** replace the contents of the **same** folder with the new zip, then click the reload icon on the Tuckfill card in `chrome://extensions`. Your data stays.
+
+**Firefox (140 or later).** No unzipping: open `tuckfill-firefox-<version>.xpi` in Firefox (drag it onto the window) and click **Add**. It stays installed when Firefox closes. Touch ID isn't available in Firefox; use a PIN.
+
+**Safari (26 or later).** Unzip as above. In Safari → Settings → Advanced, tick **Show features for web developers**. Then on the **Developer** tab tick **Allow unsigned extensions**, click **Add Temporary Extension…** and pick the folder. On the **Extensions** tab, make sure Tuckfill is ticked. Safari removes Tuckfill every time it quits (⌘Q), so repeat **Allow unsigned extensions** and **Add Temporary Extension** each time you open Safari. Your entries stay.
 
 ## 2. Getting started
 
@@ -85,7 +89,7 @@ Tuckfill only runs on sites you choose.
 
 1. Open the site you want to fill.
 2. Click the Tuckfill icon and flip the switch at the top (**Show the in-field button here**).
-3. Chrome asks for access to **that site only**. Click **Allow**.
+3. The browser asks for access to **that site only**. Click **Allow**.
 
 To turn it off, flip the same switch. All sites you've turned on are listed under Settings → **Sites**.
 
@@ -130,9 +134,9 @@ All of this lives in **Settings** (the sliders icon at the top right of the popu
 
 <img src="images/settings.jpg" width="300" alt="Tuckfill Settings: Lock, Backup, Sites">
 
-**Touch ID / Windows Hello.** Settings → Lock → **Unlock with Touch ID**, or accept the offer after you type your passphrase. Save the passkey to **iCloud Keychain** or **Google Password Manager**, not "This Chrome profile". Tuckfill still asks for your passphrase every 2 weeks so you don't forget it. Inside web pages, Touch ID works on https sites only.
+**Touch ID / Windows Hello.** Settings → Lock → **Unlock with Touch ID**, or accept the offer after you type your passphrase. Save the passkey to **iCloud Keychain** or **Google Password Manager**, not "This Chrome profile". Tuckfill still asks for your passphrase every 2 weeks so you don't forget it. Inside web pages, Touch ID works on https sites only. Works in Chrome and Safari, not in Firefox.
 
-**Auto-lock.** Tuckfill locks itself after a period of inactivity (15 minutes by default) and when Chrome closes.
+**Auto-lock.** Settings → **Lock Tuckfill**. By default it locks when your computer locks, or after an hour away from it. Firefox can't tell when the computer locks, so there it locks after 15 minutes away; Safari can't see any activity, so there it locks 15 minutes after you last used Tuckfill. Other choices: only when you close the browser, or after a set time. Closing the browser, or its last window, always locks it. With a **PIN**, you type the PIN to go on after a lock; after the browser restarts, the passphrase (or Touch ID) is needed.
 
 **Backup.**
 - **Export** saves an encrypted `.tuckfill` file that opens with the same passphrase. Do it regularly: it's your only copy if your laptop dies or you forget the passphrase.
@@ -142,7 +146,7 @@ All of this lives in **Settings** (the sliders icon at the top right of the popu
 
 ## 7. Report a bug
 
-1. Open Settings, scroll to **About**, and click **Copy**. This copies your Tuckfill, Chrome and OS versions, **without** any entries or sites.
+1. Open Settings, scroll to **About**, and click **Copy**. This copies your Tuckfill, browser and OS versions, **without** any entries or sites.
 2. Send it in chat, or open an **Issue** in this repo, using this format:
 
 | | |
@@ -166,7 +170,7 @@ All of this lives in **Settings** (the sliders icon at the top right of the popu
 - Whatever you fill is visible to that site (that's the point), so only fill on sites you trust.
 
 **The button doesn't show up in a field?**
-Check that the site switch in the popup is on. Tuckfill only runs on regular http/https pages, not on `chrome://` pages or the Chrome Web Store.
+Check that the site switch in the popup is on. Tuckfill only runs on regular http/https pages, not on the browser's own pages (`chrome://`, `about:`) or its add-on store.
 
 **My entries disappeared after an update?**
 They shouldn't: Tuckfill keeps the same ID whatever folder it's in. Make sure the old version is *removed* (never have two Tuckfills installed), then open the popup again. If it's still empty, restore from a backup and report it.

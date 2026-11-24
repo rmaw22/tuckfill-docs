@@ -12,9 +12,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-beta-ff9a3d" alt="Status: beta">
-  <img src="https://img.shields.io/badge/Chrome-Manifest%20V3-2f4fa8" alt="Chrome Manifest V3">
+  <img src="https://img.shields.io/badge/Chrome%20·%20Firefox%20·%20Safari-Manifest%20V3-2f4fa8" alt="Chrome, Firefox and Safari, Manifest V3">
   <img src="https://img.shields.io/badge/network%20requests-none-1c7c4e" alt="No network requests">
-  <img src="https://img.shields.io/badge/size-52%20KB%20gzipped-2f4fa8" alt="Size: 52 KB gzipped">
+  <img src="https://img.shields.io/badge/size-54%20KB%20gzipped-2f4fa8" alt="Size: 54 KB gzipped">
   <img src="https://img.shields.io/badge/license-MIT-131a2e" alt="License: MIT">
 </p>
 
@@ -26,7 +26,7 @@
   <img src="images/picker-set.jpg" alt="Picker Tuckfill terbuka di bawah field Corporate ID, menawarkan set yang mengisi tiga field" width="440">
 </p>
 
-Tuckfill adalah Chrome extension untuk teks yang sering kamu ketik di form: email test, password, alamat, template. Simpan sekali, lalu isi field mana pun lewat tombol kecil di dalam field-nya. Semua data tersimpan **terenkripsi di laptop kamu sendiri** dan nggak dikirim ke mana pun.
+Tuckfill adalah browser extension (Chrome, Firefox, Safari) untuk teks yang sering kamu ketik di form: email test, password, alamat, template. Simpan sekali, lalu isi field mana pun lewat tombol kecil di dalam field-nya. Semua data tersimpan **terenkripsi di laptop kamu sendiri** dan nggak dikirim ke mana pun.
 
 > Panduan ini juga ada di dalam zip Tuckfill sebagai `PANDUAN.html`. Bisa dibuka offline dan di-print ke PDF.
 
@@ -44,6 +44,10 @@ Tuckfill adalah Chrome extension untuk teks yang sering kamu ketik di form: emai
 <img src="images/install.jpg" width="720" alt="Halaman chrome://extensions dengan Developer mode on dan card Tuckfill">
 
 > **Update ke versi baru:** timpa isi folder yang **sama** dengan isi zip baru, lalu klik ikon reload di card Tuckfill di `chrome://extensions`. Data kamu tetap aman.
+
+**Firefox (140 ke atas).** Tidak perlu unzip: buka file `tuckfill-firefox-<versi>.xpi` di Firefox (drag ke jendelanya), lalu klik **Add**. Tetap terpasang walau Firefox ditutup. Touch ID belum bisa di Firefox, jadi pakai PIN.
+
+**Safari (26 ke atas).** Unzip seperti di atas. Di Safari → Settings → Advanced, centang **Show features for web developers**. Lalu di tab **Developer**, centang **Allow unsigned extensions**, klik **Add Temporary Extension…** dan pilih folder tadi. Di tab **Extensions**, pastikan Tuckfill tercentang. Safari mencopot Tuckfill setiap kali ditutup (⌘Q), jadi ulangi **Allow unsigned extensions** dan **Add Temporary Extension** setiap membuka Safari. Entry kamu tetap ada.
 
 ## 2. Getting started
 
@@ -85,7 +89,7 @@ Tuckfill cuma aktif di site yang kamu pilih sendiri.
 
 1. Buka site yang mau di-fill.
 2. Klik ikon Tuckfill, lalu nyalakan switch di bagian atas (**Show the in-field button here**).
-3. Chrome akan minta izin untuk **site itu saja**. Klik **Allow**.
+3. Browser akan minta izin untuk **site itu saja**. Klik **Allow**.
 
 Untuk mematikannya, matikan lagi switch yang sama. Semua site yang sudah on ada di Settings → **Sites**.
 
@@ -130,9 +134,9 @@ Semuanya ada di **Settings** (ikon slider di kanan atas popup).
 
 <img src="images/settings.jpg" width="300" alt="Settings Tuckfill: Lock, Backup, Sites">
 
-**Touch ID / Windows Hello.** Buka Settings → Lock → **Unlock with Touch ID**, atau terima tawarannya setelah kamu memasukkan passphrase. Simpan passkey-nya ke **iCloud Keychain** atau **Google Password Manager**, jangan ke "This Chrome profile". Passphrase tetap diminta tiap 2 minggu supaya nggak lupa. Di dalam halaman web, Touch ID cuma jalan di site https.
+**Touch ID / Windows Hello.** Buka Settings → Lock → **Unlock with Touch ID**, atau terima tawarannya setelah kamu memasukkan passphrase. Simpan passkey-nya ke **iCloud Keychain** atau **Google Password Manager**, jangan ke "This Chrome profile". Passphrase tetap diminta tiap 2 minggu supaya nggak lupa. Di dalam halaman web, Touch ID cuma jalan di site https. Bisa di Chrome dan Safari, belum bisa di Firefox.
 
-**Auto-lock.** Tuckfill otomatis ke-lock kalau nggak dipakai (default 15 menit) dan saat Chrome ditutup.
+**Auto-lock.** Settings → **Lock Tuckfill**. Default-nya ke-lock saat laptop dikunci, atau setelah 1 jam laptop nggak disentuh. Firefox nggak tahu kapan laptop dikunci, jadi di sana ke-lock setelah 15 menit laptop nggak disentuh; Safari nggak bisa melihat aktivitas sama sekali, jadi di sana ke-lock 15 menit setelah terakhir pakai Tuckfill. Pilihan lain: hanya saat browser ditutup, atau setelah waktu tertentu. Menutup browser, atau window terakhirnya, selalu mengunci. Kalau pakai **PIN**, cukup ketik PIN setelah ke-lock; setelah browser restart, tetap perlu passphrase (atau Touch ID).
 
 **Backup.**
 - **Export** menyimpan file `.tuckfill` yang terenkripsi, dibuka dengan passphrase yang sama. Lakukan rutin, karena ini satu-satunya cadangan kalau laptop rusak atau passphrase lupa.
@@ -142,7 +146,7 @@ Semuanya ada di **Settings** (ikon slider di kanan atas popup).
 
 ## 7. Report a bug
 
-1. Buka Settings, scroll ke **About**, lalu klik **Copy**. Ini meng-copy versi Tuckfill, versi Chrome, dan OS, **tanpa** entry atau site kamu.
+1. Buka Settings, scroll ke **About**, lalu klik **Copy**. Ini meng-copy versi Tuckfill, versi browser, dan OS, **tanpa** entry atau site kamu.
 2. Kirim lewat chat, atau buka **Issue** di repo ini, dengan format:
 
 | | |
@@ -166,7 +170,7 @@ Semuanya ada di **Settings** (ikon slider di kanan atas popup).
 - Value yang di-fill pasti terlihat oleh site itu (memang itu tujuannya), jadi fill hanya di site yang kamu percaya.
 
 **Tombol nggak muncul di field?**
-Pastikan site switch di popup sudah on. Tuckfill cuma jalan di halaman http/https biasa, nggak jalan di halaman `chrome://` atau Chrome Web Store.
+Pastikan site switch di popup sudah on. Tuckfill cuma jalan di halaman http/https biasa, nggak jalan di halaman bawaan browser (`chrome://`, `about:`) atau store add-on-nya.
 
 **Entry hilang setelah update?**
 Harusnya nggak, karena Tuckfill punya ID yang tetap di folder mana pun. Pastikan versi lama sudah di-*remove* (jangan sampai ada dua Tuckfill terpasang), lalu buka popup lagi. Kalau masih kosong, restore dari backup dan laporkan.
