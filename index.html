@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tuckfill · Type it once. Use it constantly. Keep it safe.</title>
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="id" href="id.html">
+<meta name="description" content="Tuckfill saves the text you keep typing into forms and fills it from a small button inside the field. Encrypted on your own computer, no network requests.">
+<!-- One static file, no build. Design source: design/landing.html in the code repo. Screenshots come from `npm run guide:shots` there. -->
+<style>
+  @font-face { font-family: Inter; src: url(assets/inter.woff2) format('woff2'); font-weight: 100 900; font-display: swap; }
+  :root {
+    --ground: #ffffff; --surface: #ffffff; --surface-2: #f4f5f9; --line: #e2e5ee; --line-strong: #cfd4e1;
+    --ink: #131a2e; --ink-2: #586079; --accent: #2f4fa8; --accent-hover: #26418c; --accent-soft: #edf1fb;
+    --accent-line: #cdd7f2; --accent-ink: #27428f; --on-accent: #ffffff;
+    --warn: #8a4200; --warn-soft: #fff3e2; --warn-line: #f2c38b;
+    --brand: #2f4fa8; --spark: #ff9a3d;
+    --shadow: 0 1px 2px rgba(20,22,28,.06), 0 8px 28px rgba(20,22,28,.08);
+    --sans: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --top: 56px;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0f1219; --surface: #171b25; --surface-2: #171b25; --line: #283043; --line-strong: #374158;
+      --ink: #e7eaf2; --ink-2: #9ea7bd; --accent: #7f9af5; --accent-hover: #97aef8; --accent-soft: #1a2440;
+      --accent-line: #2c3d70; --accent-ink: #a9bdfa; --on-accent: #0f1219;
+      --warn: #f0a35b; --warn-soft: #2b2013; --warn-line: #5c3f1d;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--top) + 20px); }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 16px/1.6 var(--sans); letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent-ink); text-underline-offset: 3px; }
+  img { max-width: 100%; height: auto; display: block; }
+  h1, h2, h3, p { margin: 0; }
+  code { font: 0.88em var(--mono); background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; }
+  kbd { font: 600 12px var(--sans); background: var(--surface); border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+  .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .skip { position: absolute; left: 12px; top: -60px; z-index: 30; background: var(--accent); color: var(--on-accent); padding: 8px 14px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+  .skip:focus { top: 8px; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+  /* Top bar */
+  .top { position: sticky; top: 0; z-index: 20; height: var(--top); background: color-mix(in srgb, var(--ground) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .top .wrap { height: 100%; display: flex; align-items: center; gap: 18px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
+  .logo svg { width: 26px; height: 26px; }
+  .badge { font: 600 11px var(--sans); color: var(--accent-ink); background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 999px; padding: 1px 8px; }
+  .top nav { margin-left: auto; display: flex; align-items: center; gap: 18px; font-size: 14px; }
+  .top nav a { color: var(--ink-2); text-decoration: none; font-weight: 500; padding: 4px 0; }
+  .top nav a:hover { color: var(--ink); }
+  .lang { display: flex; border: 1px solid var(--line-strong); border-radius: 7px; overflow: hidden; font-size: 12px; font-weight: 600; }
+  .top nav .lang a { padding: 3px 9px; color: var(--ink-2); }
+  .top nav .lang .on { background: var(--accent-soft); color: var(--accent-ink); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--sans); text-decoration: none; border-radius: 9px; padding: 9px 16px; border: 1px solid var(--line-strong); color: var(--ink); background: var(--surface); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn.sm { padding: 6px 12px; font-size: 13px; }
+  .top nav a.btn { color: var(--ink); }
+
+  /* Hero */
+  .hero { padding: 72px 0 56px; }
+  .hero .wrap { display: grid; gap: 40px; align-items: center; }
+  .hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; letter-spacing: -0.035em; }
+  .hero h1 em { font-style: normal; color: var(--accent-ink); }
+  .hero .lead { font-size: 18px; color: var(--ink-2); margin-top: 16px; max-width: 34em; }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+  .cta small { flex-basis: 100%; color: var(--ink-2); font-size: 13px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 22px; font-size: 13px; color: var(--ink-2); padding: 0; list-style: none; }
+  .chips li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 2px; }
+  .shot { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); background: #fff; }
+  .hero .shot { max-width: 442px; } /* 440 px image + border: exactly half its pixels, so it stays sharp */
+  .hero .wrap { grid-template-columns: 1.1fr .9fr; }
+  .hero .shot { justify-self: end; }
+
+  /* Feature cards */
+  .features { padding: 8px 0 64px; }
+  .features .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .card { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: var(--surface); }
+  .card svg { width: 22px; height: 22px; color: var(--accent); }
+  .card h3 { font-size: 16px; margin: 10px 0 4px; letter-spacing: -0.01em; }
+  .card p { color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+
+  /* Section pills: small screens only */
+  .pills { display: none; position: sticky; top: var(--top); z-index: 10; background: var(--ground); border-block: 1px solid var(--line); }
+  .pills .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 8px; scrollbar-width: none; mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+  .pills a { flex: none; font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; padding: 4px 11px; border-radius: 999px; }
+  .pills a.on { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+
+  /* Docs shell */
+  .shell { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 56px; align-items: start; }
+  .shell { border-top: 1px solid var(--line); }
+  .side { position: sticky; top: var(--top); max-height: calc(100vh - var(--top)); overflow-y: auto; padding: 28px 0; font-size: 14px; }
+  .side-h { margin: 0 0 8px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); }
+  .side-h:not(:first-child) { margin-top: 22px; }
+  .side a { display: block; padding: 5px 12px; margin-left: -12px; border-radius: 7px; color: var(--ink-2); text-decoration: none; }
+  .side a:hover { color: var(--ink); }
+  .side a.on { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+  .doc { padding: 28px 0 80px; min-width: 0; max-width: 760px; }
+  .doc section { padding-top: 44px; }
+  .doc section:first-of-type { padding-top: 12px; }
+  .doc h2 { font-size: 26px; letter-spacing: -0.025em; line-height: 1.2; }
+  .doc h2 .n { color: var(--accent-ink); font-weight: 600; margin-right: 6px; }
+  .doc h3 { font-size: 17px; letter-spacing: -0.01em; margin-top: 28px; }
+  .doc p, .doc ul, .doc ol, .doc figure, .doc .note, .doc .row, .doc details { margin: 14px 0 0; }
+  .doc ul, .doc ol { padding-left: 22px; }
+  .doc :is(p, ul, ol) { max-width: 70ch; }
+  .doc li + li { margin-top: 6px; }
+  .doc ol > li::marker { color: var(--accent-ink); font-weight: 600; }
+  .note { border: 1px solid var(--accent-line); background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; font-size: 14px; }
+  .note.warn { border-color: var(--warn-line); background: var(--warn-soft); }
+  .note.warn b:first-child { color: var(--warn); }
+  .tbl { overflow-x: auto; margin-top: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
+  figure .shot { box-shadow: none; }
+  figure.pop .shot { max-width: 300px; }
+  figure.mid .shot { max-width: 400px; }
+  figcaption { font-size: 13px; color: var(--ink-2); margin-top: 8px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; align-items: start; }
+  .row figure { margin: 0; }
+  .tabs { display: flex; gap: 4px; margin-top: 18px; border-bottom: 1px solid var(--line); }
+  .tabs button { font: 600 14px var(--sans); color: var(--ink-2); background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 12px; margin-bottom: -1px; cursor: pointer; }
+  .tabs button[aria-selected=true] { color: var(--accent-ink); border-bottom-color: var(--accent); }
+  details { border: 1px solid var(--line); border-radius: 10px; padding: 0 16px; background: var(--surface); }
+  details + details { margin-top: 8px; }
+  summary { cursor: pointer; font-weight: 600; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::after { content: '+' / ''; color: var(--ink-2); font-weight: 400; }
+  details[open] summary::after { content: '–' / ''; }
+  details > :last-child { margin-bottom: 16px; }
+  details > :nth-child(2) { margin-top: 0; }
+  footer { border-top: 1px solid var(--line); padding: 28px 0; font-size: 13px; color: var(--ink-2); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: minmax(0, 1fr) !important; }
+    .side { display: none; }
+    .pills { display: block; }
+    .hero .wrap { grid-template-columns: 1fr; }
+    .hero .shot { justify-self: start; }
+    .hero { padding: 44px 0 36px; }
+    .top nav a.hide-s, .badge { display: none; }
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#guide">Skip to the guide</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top">
+      <svg viewBox="0 0 128 128" aria-hidden="true"><rect x=".5" y=".5" width="127" height="127" rx="29.5" fill="#2f4fa8"/><path d="M30 52v17a25 25 0 0 0 25 25h18a25 25 0 0 0 25-25V52" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round"/><rect x="46" y="34" width="36" height="20" rx="10" fill="#ff9a3d"/></svg>
+      Tuckfill
+    </a>
+    <span class="badge">0.6.0 beta</span>
+    <nav aria-label="Site">
+      <a class="hide-s" href="#install">Guide</a>
+      <a class="hide-s" href="#faq">FAQ</a>
+      <a class="hide-s" href="https://github.com/rmaw22/tuckfill-docs">GitHub</a>
+      <span class="lang"><a class="on" href="#top" lang="en" aria-current="true" aria-label="English">EN</a><a href="id.html" lang="id" hreflang="id" aria-label="Bahasa Indonesia" >ID</a></span>
+      <a class="btn sm" href="https://github.com/rmaw22/tuckfill-docs/releases">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <h1>Type it once.<br>Use it constantly.<br><em>Keep it safe.</em></h1>
+      <p class="lead">Tuckfill saves the text you keep typing into forms and fills it from a small button inside the field. Everything stays encrypted on your own computer.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/rmaw22/tuckfill-docs/releases">Download the beta</a>
+        <a class="btn" href="#install">Read the guide</a>
+        <small>From GitHub Releases. Chrome, Edge, Brave, Arc 127+ · Firefox 140+ · Safari 26+</small>
+      </div>
+      <ul class="chips">
+        <li>No network requests</li><li>No account</li><li>54 KB gzipped</li><li>MIT license</li>
+      </ul>
+    </div>
+    <div class="shot"><img src="images/hero.png" width="880" height="840" alt="The Tuckfill picker open under a Corporate ID field, offering a set that fills three fields"></div>
+  </div>
+</div>
+
+<div class="features">
+  <h2 class="vh">What Tuckfill does</h2>
+  <div class="wrap">
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="3"/><path d="M16 12h.01"/></svg>
+      <h3>A button inside the field</h3>
+      <p>Click a field, press the small blue button, pick an entry. Tuckfill never submits the form, and one Undo puts everything back.</p>
+    </div>
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      <h3>Sets fill a whole form</h3>
+      <p>Corporate ID, User ID and Password in one pick. Each value goes to the field whose label matches; nothing is guessed.</p>
+    </div>
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M20 10a8 8 0 0 0-14-4L4 10m0 4a8 8 0 0 0 14 4l2-4"/></svg>
+      <h3>Fresh values every time</h3>
+      <p><code>qa+{{random}}@acme.test</code> gives a new email on every sign-up. Dates, times and UUIDs work the same way.</p>
+    </div>
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <h3>Local and encrypted</h3>
+      <p>AES-256 with a key from your passphrase. No server, no cloud, no sync. It only runs on the sites you switch on.</p>
+    </div>
+  </div>
+</div>
+
+<nav class="pills" aria-label="Sections"><div class="wrap">
+  <a href="#about">Overview</a><a href="#install">Install</a><a href="#start">Getting started</a><a href="#site">Turn on for a site</a><a href="#fill">Fill a field</a><a href="#sets">Sets</a><a href="#many">Many sites &amp; entries</a><a href="#lock">Lock &amp; backup</a><a href="#faq">FAQ</a><a href="#limits">Limits</a><a href="#trouble">Troubleshooting</a><a href="#bug">Report a bug</a>
+</div></nav>
+
+<div class="wrap shell">
+  <nav class="side" aria-label="Guide">
+    <p class="side-h">Guide</p>
+    <a href="#about">Overview</a>
+    <a href="#install">1. Install</a>
+    <a href="#start">2. Getting started</a>
+    <a href="#site">3. Turn on for a site</a>
+    <a href="#fill">4. Fill a field</a>
+    <a href="#sets">5. Sets</a>
+    <a href="#many">6. Many sites &amp; entries</a>
+    <a href="#lock">7. Lock, PIN, Touch ID &amp; backup</a>
+    <p class="side-h">Help</p>
+    <a href="#faq">FAQ</a>
+    <a href="#limits">Limits</a>
+    <a href="#trouble">Troubleshooting</a>
+    <a href="#bug">Report a bug</a>
+  </nav>
+
+  <main class="doc" id="guide">
+    <section id="about">
+      <h2>What Tuckfill is for</h2>
+      <p>For anyone, technical or not, who keeps retyping the same text into forms: QA signing up test accounts again and again, admins entering the same data into several systems, or anyone tired of typing an address or a reply template.</p>
+      <ul>
+        <li><b>What you save:</b> plain text (emails, addresses, templates, numbers) and logins (user ID, password, PIN), one at a time or as a <a href="#sets">set</a> that fills several fields at once.</li>
+        <li><b>How it's kept:</b> every entry is encrypted on your computer, and Tuckfill makes no network connection at all.</li>
+      </ul>
+      <h3>What it doesn't do</h3>
+      <ul>
+        <li>It isn't a password generator. <code>{{random}}</code> is just 6 digits for test data.</li>
+        <li>No sync yet: your data lives in this browser only. Move it with a backup file.</li>
+        <li>No sharing entries with other people.</li>
+        <li>It never presses Submit. You check the form and send it.</li>
+      </ul>
+    </section>
+
+    <section id="install">
+      <h2><span class="n">1.</span>Install</h2>
+      <p>The beta isn't in the browser stores yet, so it's installed from a file. Get it from the <a href="https://github.com/rmaw22/tuckfill-docs/releases">Releases</a> page.</p>
+      <div class="tabs" role="tablist" aria-label="Browser">
+        <button role="tab" id="tab-chrome" aria-controls="panel-chrome" aria-selected="true" data-tab="chrome">Chrome</button>
+        <button role="tab" id="tab-firefox" aria-controls="panel-firefox" aria-selected="false" tabindex="-1" data-tab="firefox">Firefox</button>
+        <button role="tab" id="tab-safari" aria-controls="panel-safari" aria-selected="false" tabindex="-1" data-tab="safari">Safari</button>
+      </div>
+      <div role="tabpanel" id="panel-chrome" aria-labelledby="tab-chrome" data-panel="chrome">
+        <ol>
+          <li>Works in Chrome, Edge, Brave and Arc, version 127 or newer. Unzip <code>tuckfill-&lt;version&gt;.zip</code> into a folder that <b>stays put</b>, e.g. <code>Documents/Tuckfill</code>. Don't delete or move it: the browser runs Tuckfill from that folder.</li>
+          <li>Open <code>chrome://extensions</code> and turn on <b>Developer mode</b> (top right).</li>
+          <li>Click <b>Load unpacked</b> and pick that folder.</li>
+          <li>Click the puzzle icon in the toolbar and pin <b>Tuckfill</b> so it's always visible.</li>
+        </ol>
+        <figure><div class="shot"><img loading="lazy" src="images/install.jpg" width="1800" height="660" alt="chrome://extensions with Developer mode on and the Tuckfill card"></div></figure>
+        <p class="note"><b>Updating:</b> replace the contents of the <b>same</b> folder with the new zip, then click the reload icon on the Tuckfill card. Your data stays. Never install two copies side by side.</p>
+      </div>
+      <div role="tabpanel" id="panel-firefox" aria-labelledby="tab-firefox" data-panel="firefox" hidden>
+        <ol>
+          <li>Needs Firefox 140 or newer.</li>
+          <li>Open <code>tuckfill-firefox-&lt;version&gt;.xpi</code> in Firefox (drag it onto the window).</li>
+          <li>Click <b>Add</b>. It stays installed after Firefox closes.</li>
+        </ol>
+        <p class="note">The Firefox file (<code>.xpi</code>) isn't on the Releases page yet. Touch ID isn't available in Firefox; use the 6-digit PIN.</p>
+      </div>
+      <div role="tabpanel" id="panel-safari" aria-labelledby="tab-safari" data-panel="safari" hidden>
+        <ol>
+          <li>Needs Safari 26 or newer. Unzip the zip into a folder that stays put.</li>
+          <li>Safari → Settings → Advanced → tick <b>Show features for web developers</b>.</li>
+          <li><b>Developer</b> tab → tick <b>Allow unsigned extensions</b> → <b>Add Temporary Extension…</b> → pick the folder.</li>
+          <li><b>Extensions</b> tab → make sure Tuckfill is ticked.</li>
+        </ol>
+        <p class="note warn"><b>Heads up:</b> Safari removes Tuckfill every time it quits (Cmd+Q), so repeat step 3 each time you open Safari. Your entries stay.</p>
+      </div>
+    </section>
+
+    <section id="start">
+      <h2><span class="n">2.</span>Getting started</h2>
+      <h3>Create a passphrase</h3>
+      <p>Click the Tuckfill icon and create a <b>passphrase</b> of at least 10 characters. It locks all your entries. You enter it once each time the browser starts; after your computer locks, a 6-digit PIN or Touch ID is enough (see <a href="#lock">Lock, PIN, Touch ID &amp; backup</a>).</p>
+      <p class="note warn"><b>Remember it.</b> If you forget it, your data can't be recovered by anyone.</p>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/setup.jpg" width="720" height="1080" alt="Tuckfill setup screen: create a passphrase"></div></figure>
+      <h3>Add your first entry</h3>
+      <p>Click <b>Add</b> in the <b>Get started</b> checklist, fill in <b>Name</b> and <b>Value</b>, then click <b>Add entry</b>.</p>
+      <ul>
+        <li><b>Secret</b>: for passwords and tokens. Masked (••••), not searchable, and can't be copied.</li>
+        <li><b>Only on this site</b>: the entry shows up only on the site you have open. Turn it off to show it everywhere. It can cover several sites, ports or <code>*.domain</code> too: see <a href="#many">Many sites &amp; entries</a>.</li>
+        <li><b>Group</b>: optional, to keep things together, e.g. "Staging ACME".</li>
+      </ul>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/add-single.jpg" width="720" height="1080" alt="Add entry form with the value qa+{{random}}@acme.test"></div></figure>
+      <h3>Dynamic values</h3>
+      <p>Put these in a value and Tuckfill replaces them every time it fills:</p>
+      <div class="tbl" tabindex="0" role="region" aria-label="Dynamic values"><table>
+        <tr><th>Write</th><th>Gives</th><th>Example</th><th>Fills as</th></tr>
+        <tr><td><code>{{random}}</code></td><td>6 random digits</td><td><code>qa+{{random}}@acme.test</code></td><td><code>qa+481920@acme.test</code></td></tr>
+        <tr><td><code>{{date}}</code></td><td>today's date</td><td><code>Test order {{date}}</code></td><td><code>Test order 2026-11-08</code></td></tr>
+        <tr><td><code>{{time}}</code></td><td>the time now</td><td><code>Run {{time}}</code></td><td><code>Run 14:05</code></td></tr>
+        <tr><td><code>{{uuid}}</code></td><td>a long unique ID</td><td><code>{{uuid}}</code></td><td><code>3f2b8c1e-…</code></td></tr>
+      </table></div>
+    </section>
+
+    <section id="site">
+      <h2><span class="n">3.</span>Turn on for a site</h2>
+      <p>Tuckfill only runs on sites you choose.</p>
+      <ol>
+        <li>Open the site you want to fill.</li>
+        <li>Click the Tuckfill icon and flip the switch at the top (<b>Show the in-field button here</b>).</li>
+        <li>The browser asks for access to <b>that site only</b>. Click <b>Allow</b>.</li>
+      </ol>
+      <p>To turn it off, flip the same switch. All sites you've turned on are listed under Settings → <b>Sites</b>.</p>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/get-started.jpg" width="720" height="552" alt="Tuckfill popup with the site switch on and the Get started checklist"></div></figure>
+    </section>
+
+    <section id="fill">
+      <h2><span class="n">4.</span>Fill a field</h2>
+      <ol>
+        <li>Click a field on that site. A small blue button appears inside it.</li>
+        <li>Click the button and pick an entry. You can also type to search and press <kbd>Enter</kbd>.</li>
+        <li>The value goes into the field. Tuckfill <b>never</b> submits the form, so you can check first. Picked the wrong one? Click <b>Undo</b>.</li>
+      </ol>
+      <div class="row">
+        <figure><div class="shot"><img loading="lazy" src="images/field-button.jpg" width="880" height="536" alt="Email field with the blue Tuckfill button"></div><figcaption>① The button inside the field</figcaption></figure>
+        <figure><div class="shot"><img loading="lazy" src="images/picker.jpg" width="880" height="1040" alt="Tuckfill picker open below the email field"></div><figcaption>② Pick an entry</figcaption></figure>
+        <figure><div class="shot"><img loading="lazy" src="images/filled-single.jpg" width="880" height="632" alt="Email field filled, with an Undo toast"></div><figcaption>③ Filled, with a fresh random number</figcaption></figure>
+      </div>
+      <p>Keyboard: click a field, then press <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> (Mac: <kbd>⌥ Option</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd>). In the picker, use <kbd>↑</kbd> <kbd>↓</kbd> and <kbd>Enter</kbd>; <kbd>Esc</kbd> closes it.</p>
+    </section>
+
+    <section id="sets">
+      <h2><span class="n">5.</span>Sets: fill several fields at once</h2>
+      <p>For a test account made of several values, e.g. Corporate ID + User ID + Password, create a <b>set</b>:</p>
+      <ol>
+        <li>Click <b>Add entry</b> and choose <b>Set of fields</b>.</li>
+        <li>Name each field <b>like its label on the form</b> ("Email", "User ID", "Phone", "Password"), then fill in its value.</li>
+        <li>Mark the password as <b>Secret</b>.</li>
+      </ol>
+      <p>Click <b>any</b> field on that form and pick the set. Each value goes into the field whose name matches.</p>
+      <div class="row">
+        <figure><div class="shot"><img loading="lazy" src="images/picker-set.jpg" width="880" height="840" alt="Picker open on the Corporate ID field"></div><figcaption>Click any field, pick the set</figcaption></figure>
+        <figure><div class="shot"><img loading="lazy" src="images/filled-set.jpg" width="880" height="800" alt="Three fields filled, with a Filled 3 fields toast"></div><figcaption>Three fields filled at once</figcaption></figure>
+      </div>
+      <ul>
+        <li>Values without a matching field are <b>skipped</b>, never guessed. The toast tells you, e.g. "Filled 2 of 3, 1 not found".</li>
+        <li>A password only ever goes into a password box.</li>
+        <li>One <b>Undo</b> restores every field.</li>
+        <li>Within a set, every <code>{{random}}</code> uses the same number.</li>
+      </ul>
+    </section>
+
+    <section id="many">
+      <h2><span class="n">6.</span>Many sites &amp; entries</h2>
+      <h3>One entry on several sites</h3>
+      <p>In the entry form, turn on <b>Only on this site</b>, then type another site in <b>Add a site</b> and press Enter.</p>
+      <div class="tbl" tabindex="0" role="region" aria-label="Site patterns"><table>
+        <tr><th>Type</th><th>Shows up on</th></tr>
+        <tr><td><code>localhost</code></td><td>localhost, on any port</td></tr>
+        <tr><td><code>localhost:8080</code></td><td>port 8080 only</td></tr>
+        <tr><td><code>*.staging.acme.test</code></td><td>staging.acme.test and every subdomain of it</td></tr>
+      </table></div>
+      <ul>
+        <li>You can paste a full URL. Tuckfill keeps just the site; http and https count as one.</li>
+        <li>Wildcards that are too wide, like <code>*.com</code> or <code>*.co.id</code>, are refused.</li>
+        <li>For a wildcard, click <b>Allow</b> to turn the in-field button on for all its subdomains at once.</li>
+      </ul>
+      <h3>When you have many entries</h3>
+      <p>With more than 15 entries, the popup lists only <b>This site</b> and <b>Recent</b>. The rest is behind <b>N more in N groups</b>. <b>Search</b> covers every entry, including group and site names, and initials work too: <code>tpcm</code> finds "Test Payment Corp Maker". Secret values are never searched.</p>
+      <div class="row">
+        <figure class="pop"><div class="shot"><img loading="lazy" src="images/list-long.jpg" width="720" height="1080" alt="Popup with This site entries and a 14 more in 5 groups row"></div></figure>
+        <figure class="pop"><div class="shot"><img loading="lazy" src="images/list-groups.jpg" width="720" height="1080" alt="Group list in the popup with Manage all entries"></div></figure>
+      </div>
+      <h3>The All entries page</h3>
+      <p>From the group list, click <b>Manage all entries</b>. There you can move several entries to a group, set their sites or delete them at once, and see every site Tuckfill is on.</p>
+      <p class="note">This page shows your whole vault, so it <b>asks for your PIN, Touch ID or passphrase every time it opens</b>, even when the popup is unlocked.</p>
+      <figure><div class="shot"><img loading="lazy" src="images/manage.jpg" width="1800" height="1120" alt="All entries page: group sidebar, entry table, two entries ticked"></div></figure>
+    </section>
+
+    <section id="lock">
+      <h2><span class="n">7.</span>Lock, PIN, Touch ID &amp; backup</h2>
+      <p>All of this lives in <b>Settings</b> (the sliders icon at the top right of the popup).</p>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/settings.jpg" width="720" height="1080" alt="Tuckfill Settings: PIN, auto-lock, names while locked, Backup"></div></figure>
+      <h3>Auto-lock</h3>
+      <p>Tuckfill locks when your computer locks or sleeps, after an hour away from it, and when the browser closes. Firefox and Safari can't tell when the computer locks, so there it locks after 15 minutes instead. Prefer a timer (5 minutes to 4 hours)? Change it in Settings → Lock.</p>
+      <h3>6-digit PIN</h3>
+      <p>Settings → Lock → <b>Set PIN</b>. After your computer locks, just type the PIN. When the browser restarts, your passphrase or Touch ID is still needed. 5 wrong PINs lock Tuckfill fully.</p>
+      <h3>Touch ID / Windows Hello</h3>
+      <p>Settings → Lock → <b>Unlock with Touch ID</b>. Save the passkey to <b>iCloud Keychain</b> or <b>Google Password Manager</b>, not "This Chrome profile". Tuckfill still asks for your passphrase every 2 weeks so you don't forget it. Inside web pages, Touch ID works on https sites only.</p>
+      <h3>Unlocking inside a page</h3>
+      <p>Your passphrase is only ever typed in Tuckfill itself, never inside a web page. In the picker, a PIN or Touch ID is enough; otherwise it shows <b>Open Tuckfill</b>. Entry names stay visible while locked (never their values). Don't want that? Turn off <b>Show entry names while locked</b>.</p>
+      <figure class="mid"><div class="shot"><img loading="lazy" src="images/picker-locked.jpg" width="880" height="1040" alt="The picker while locked: click a name, then enter the 6-digit PIN"></div></figure>
+      <h3>Backup</h3>
+      <ul>
+        <li><b>Export</b> saves an encrypted <code>.tuckfill</code> file that opens with the same passphrase. Do it regularly: it's your only copy if your laptop dies.</li>
+        <li><b>Import</b> merges a <code>.tuckfill</code> or <code>.csv</code> file without deleting any existing entries.</li>
+        <li>On a new laptop, choose <b>Restore from a backup</b> during setup.</li>
+        <li>A plain CSV export exists too, but that file is <b>not encrypted</b>.</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+      <details open>
+        <summary>Is it safe? Where is my data stored?</summary>
+        <ul>
+          <li>Everything stays <b>on your computer</b>, inside your browser profile. No account, no cloud, no server: Tuckfill makes no network requests at all.</li>
+          <li>Entries are <b>encrypted</b> (AES-256) with a key made from your passphrase (PBKDF2, 600,000 rounds). The passphrase itself is never saved.</li>
+          <li>Websites can't read your entries. A site only gets the one value you choose to fill.</li>
+          <li>Secrets are masked everywhere, never searchable, and can't be copied.</li>
+          <li>While Tuckfill is unlocked, someone at your computer can use it, so lock your computer when you step away (Tuckfill locks with it).</li>
+          <li>Uninstalling Tuckfill deletes its data. Keep an encrypted backup.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>How do I update to a new beta?</summary>
+        <p>Replace the contents of the <b>same</b> folder with the new zip, then click the reload icon on the Tuckfill card in <code>chrome://extensions</code>. Your entries stay.</p>
+      </details>
+      <details>
+        <summary>How will installing work after the official release?</summary>
+        <p>Once Tuckfill is on the Chrome Web Store: click <b>Add to Chrome</b>, done, and updates come in automatically. The Store version counts as a different extension, so before switching, <b>Export a backup</b> from the beta and <b>Restore from a backup</b> in the new one.</p>
+      </details>
+      <details>
+        <summary>Forgot your passphrase?</summary>
+        <p>If Tuckfill is still open, or opens with your PIN or Touch ID: Settings → <b>Change passphrase</b>, and confirm with your PIN or Touch ID. Once it's fully locked and you have no Touch ID, it can't be recovered: choose "Forgot passphrase?" to reset (all entries are deleted), then restore from a backup if you have one.</p>
+      </details>
+    </section>
+
+    <section id="limits">
+      <h2>Limits</h2>
+      <ul>
+        <li>Up to <b>1,000 entries</b> (about 3 MB). A value can be up to 5,000 characters, an entry name 60 characters, and a set has 2–12 fields. Import files up to 5 MB.</li>
+        <li>Not yet supported: dropdowns, checkboxes, radio buttons, and fields inside iframes from other sites.</li>
+        <li>Whatever you fill is visible to that site (that's the point), so only fill on sites you trust.</li>
+      </ul>
+    </section>
+
+    <section id="trouble">
+      <h2>Troubleshooting</h2>
+      <details>
+        <summary>The button doesn't show up in a field</summary>
+        <p>Check that the site switch in the popup is on. Tuckfill only runs on regular http/https pages, not on <code>chrome://</code> pages or the Chrome Web Store.</p>
+      </details>
+      <details>
+        <summary>The site switch won't turn off</summary>
+        <p>That site is on through a wildcard, like <code>*.acme.test</code>. Turn the wildcard off in Settings → Sites.</p>
+      </details>
+      <details>
+        <summary>An entry doesn't show up on the right site</summary>
+        <p>Check the entry's sites. <code>localhost:8080</code> doesn't show up on <code>localhost:3000</code>; use plain <code>localhost</code> for every port.</p>
+      </details>
+      <details>
+        <summary>"Tuckfill is hidden by this page, so it didn't fill"</summary>
+        <p>The page made Tuckfill transparent or covered it, so Tuckfill refused to fill, for your safety. Another extension that restyles pages (a dark-mode changer, say) can cause it too: try switching it off for a moment. If it happens on a site you trust, report it.</p>
+      </details>
+      <details>
+        <summary>My entries disappeared after an update</summary>
+        <p>They shouldn't: Tuckfill keeps the same ID whatever folder it's in. Make sure the old version is <i>removed</i>, then open the popup again. If it's still empty, restore from a backup and report it.</p>
+      </details>
+    </section>
+
+    <section id="bug">
+      <h2>Report a bug</h2>
+      <ol>
+        <li>Open Settings, scroll to <b>About</b>, and click <b>Copy</b>. This copies your Tuckfill, browser and OS versions, <b>without</b> any entries or sites.</li>
+        <li>Open an <a href="https://github.com/rmaw22/tuckfill-docs/issues">issue</a> with: the details you copied, the site address, the steps, what you expected, what happened, and a screenshot of the form.</li>
+      </ol>
+      <p class="note warn"><b>Careful:</b> never send passwords, entry contents, or screenshots of the popup showing your entries.</p>
+    </section>
+  </main>
+</div>
+
+<footer><div class="wrap">
+  <span>Tuckfill · MIT license · Screenshots use a demo site and fake data.</span>
+  <span><a href="https://github.com/rmaw22/tuckfill-docs">GitHub</a> · <a href="https://github.com/rmaw22/tuckfill-docs/wiki">Wiki</a> · <a href="https://github.com/rmaw22/tuckfill-docs/releases">Releases</a></span>
+</div></footer>
+
+<script>
+  // Install tabs: arrow keys move between them.
+  const tabs = [...document.querySelectorAll('.tabs button')];
+  function pick(t, focus) {
+    tabs.forEach(x => { x.setAttribute('aria-selected', x === t); x.tabIndex = x === t ? 0 : -1; });
+    document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    if (focus) t.focus();
+  }
+  tabs.forEach((t, i) => {
+    t.onclick = () => pick(t);
+    t.onkeydown = e => {
+      const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (d) pick(tabs[(i + d + tabs.length) % tabs.length], true);
+    };
+  });
+  // Open on the visitor's own browser.
+  const ua = navigator.userAgent;
+  pick(tabs[/Firefox\//.test(ua) ? 1 : /Safari\//.test(ua) && !/Chrom/.test(ua) ? 2 : 0]);
+
+  // Highlight the section in view in the sidebar and the pills.
+  const links = [...document.querySelectorAll('.side a, .pills a')];
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => { const on = a.hash === '#' + e.target.id; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'); });
+    document.querySelector('.pills a.on')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }), { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('.doc section').forEach(s => spy.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tuckfill · Ketik sekali. Pakai terus. Tetap aman.</title>
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="id" href="id.html">
+<meta name="description" content="Tuckfill menyimpan teks yang sering kamu ketik di form, lalu mengisinya lewat tombol kecil di dalam field. Terenkripsi di laptop kamu sendiri, tanpa koneksi internet.">
+<!-- One static file, no build. Design source: design/landing.html in the code repo. Screenshots come from `npm run guide:shots` there. -->
+<style>
+  @font-face { font-family: Inter; src: url(assets/inter.woff2) format('woff2'); font-weight: 100 900; font-display: swap; }
+  :root {
+    --ground: #ffffff; --surface: #ffffff; --surface-2: #f4f5f9; --line: #e2e5ee; --line-strong: #cfd4e1;
+    --ink: #131a2e; --ink-2: #586079; --accent: #2f4fa8; --accent-hover: #26418c; --accent-soft: #edf1fb;
+    --accent-line: #cdd7f2; --accent-ink: #27428f; --on-accent: #ffffff;
+    --warn: #8a4200; --warn-soft: #fff3e2; --warn-line: #f2c38b;
+    --brand: #2f4fa8; --spark: #ff9a3d;
+    --shadow: 0 1px 2px rgba(20,22,28,.06), 0 8px 28px rgba(20,22,28,.08);
+    --sans: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --top: 56px;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0f1219; --surface: #171b25; --surface-2: #171b25; --line: #283043; --line-strong: #374158;
+      --ink: #e7eaf2; --ink-2: #9ea7bd; --accent: #7f9af5; --accent-hover: #97aef8; --accent-soft: #1a2440;
+      --accent-line: #2c3d70; --accent-ink: #a9bdfa; --on-accent: #0f1219;
+      --warn: #f0a35b; --warn-soft: #2b2013; --warn-line: #5c3f1d;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--top) + 20px); }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 16px/1.6 var(--sans); letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent-ink); text-underline-offset: 3px; }
+  img { max-width: 100%; height: auto; display: block; }
+  h1, h2, h3, p { margin: 0; }
+  code { font: 0.88em var(--mono); background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; }
+  kbd { font: 600 12px var(--sans); background: var(--surface); border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+  .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .skip { position: absolute; left: 12px; top: -60px; z-index: 30; background: var(--accent); color: var(--on-accent); padding: 8px 14px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+  .skip:focus { top: 8px; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+  /* Top bar */
+  .top { position: sticky; top: 0; z-index: 20; height: var(--top); background: color-mix(in srgb, var(--ground) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .top .wrap { height: 100%; display: flex; align-items: center; gap: 18px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
+  .logo svg { width: 26px; height: 26px; }
+  .badge { font: 600 11px var(--sans); color: var(--accent-ink); background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 999px; padding: 1px 8px; }
+  .top nav { margin-left: auto; display: flex; align-items: center; gap: 18px; font-size: 14px; }
+  .top nav a { color: var(--ink-2); text-decoration: none; font-weight: 500; padding: 4px 0; }
+  .top nav a:hover { color: var(--ink); }
+  .lang { display: flex; border: 1px solid var(--line-strong); border-radius: 7px; overflow: hidden; font-size: 12px; font-weight: 600; }
+  .top nav .lang a { padding: 3px 9px; color: var(--ink-2); }
+  .top nav .lang .on { background: var(--accent-soft); color: var(--accent-ink); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--sans); text-decoration: none; border-radius: 9px; padding: 9px 16px; border: 1px solid var(--line-strong); color: var(--ink); background: var(--surface); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn.sm { padding: 6px 12px; font-size: 13px; }
+  .top nav a.btn { color: var(--ink); }
+
+  /* Hero */
+  .hero { padding: 72px 0 56px; }
+  .hero .wrap { display: grid; gap: 40px; align-items: center; }
+  .hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; letter-spacing: -0.035em; }
+  .hero h1 em { font-style: normal; color: var(--accent-ink); }
+  .hero .lead { font-size: 18px; color: var(--ink-2); margin-top: 16px; max-width: 34em; }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+  .cta small { flex-basis: 100%; color: var(--ink-2); font-size: 13px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 22px; font-size: 13px; color: var(--ink-2); padding: 0; list-style: none; }
+  .chips li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 2px; }
+  .shot { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); background: #fff; }
+  .hero .shot { max-width: 442px; } /* 440 px image + border: exactly half its pixels, so it stays sharp */
+  .hero .wrap { grid-template-columns: 1.1fr .9fr; }
+  .hero .shot { justify-self: end; }
+
+  /* Feature cards */
+  .features { padding: 8px 0 64px; }
+  .features .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .card { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: var(--surface); }
+  .card svg { width: 22px; height: 22px; color: var(--accent); }
+  .card h3 { font-size: 16px; margin: 10px 0 4px; letter-spacing: -0.01em; }
+  .card p { color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+
+  /* Section pills: small screens only */
+  .pills { display: none; position: sticky; top: var(--top); z-index: 10; background: var(--ground); border-block: 1px solid var(--line); }
+  .pills .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 8px; scrollbar-width: none; mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+  .pills a { flex: none; font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; padding: 4px 11px; border-radius: 999px; }
+  .pills a.on { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+
+  /* Docs shell */
+  .shell { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 56px; align-items: start; }
+  .shell { border-top: 1px solid var(--line); }
+  .side { position: sticky; top: var(--top); max-height: calc(100vh - var(--top)); overflow-y: auto; padding: 28px 0; font-size: 14px; }
+  .side-h { margin: 0 0 8px; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); }
+  .side-h:not(:first-child) { margin-top: 22px; }
+  .side a { display: block; padding: 5px 12px; margin-left: -12px; border-radius: 7px; color: var(--ink-2); text-decoration: none; }
+  .side a:hover { color: var(--ink); }
+  .side a.on { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+  .doc { padding: 28px 0 80px; min-width: 0; max-width: 760px; }
+  .doc section { padding-top: 44px; }
+  .doc section:first-of-type { padding-top: 12px; }
+  .doc h2 { font-size: 26px; letter-spacing: -0.025em; line-height: 1.2; }
+  .doc h2 .n { color: var(--accent-ink); font-weight: 600; margin-right: 6px; }
+  .doc h3 { font-size: 17px; letter-spacing: -0.01em; margin-top: 28px; }
+  .doc p, .doc ul, .doc ol, .doc figure, .doc .note, .doc .row, .doc details { margin: 14px 0 0; }
+  .doc ul, .doc ol { padding-left: 22px; }
+  .doc :is(p, ul, ol) { max-width: 70ch; }
+  .doc li + li { margin-top: 6px; }
+  .doc ol > li::marker { color: var(--accent-ink); font-weight: 600; }
+  .note { border: 1px solid var(--accent-line); background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; font-size: 14px; }
+  .note.warn { border-color: var(--warn-line); background: var(--warn-soft); }
+  .note.warn b:first-child { color: var(--warn); }
+  .tbl { overflow-x: auto; margin-top: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
+  figure .shot { box-shadow: none; }
+  figure.pop .shot { max-width: 300px; }
+  figure.mid .shot { max-width: 400px; }
+  figcaption { font-size: 13px; color: var(--ink-2); margin-top: 8px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; align-items: start; }
+  .row figure { margin: 0; }
+  .tabs { display: flex; gap: 4px; margin-top: 18px; border-bottom: 1px solid var(--line); }
+  .tabs button { font: 600 14px var(--sans); color: var(--ink-2); background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 12px; margin-bottom: -1px; cursor: pointer; }
+  .tabs button[aria-selected=true] { color: var(--accent-ink); border-bottom-color: var(--accent); }
+  details { border: 1px solid var(--line); border-radius: 10px; padding: 0 16px; background: var(--surface); }
+  details + details { margin-top: 8px; }
+  summary { cursor: pointer; font-weight: 600; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::after { content: '+' / ''; color: var(--ink-2); font-weight: 400; }
+  details[open] summary::after { content: '–' / ''; }
+  details > :last-child { margin-bottom: 16px; }
+  details > :nth-child(2) { margin-top: 0; }
+  footer { border-top: 1px solid var(--line); padding: 28px 0; font-size: 13px; color: var(--ink-2); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: minmax(0, 1fr) !important; }
+    .side { display: none; }
+    .pills { display: block; }
+    .hero .wrap { grid-template-columns: 1fr; }
+    .hero .shot { justify-self: start; }
+    .hero { padding: 44px 0 36px; }
+    .top nav a.hide-s, .badge { display: none; }
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#guide">Lewati ke panduan</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top">
+      <svg viewBox="0 0 128 128" aria-hidden="true"><rect x=".5" y=".5" width="127" height="127" rx="29.5" fill="#2f4fa8"/><path d="M30 52v17a25 25 0 0 0 25 25h18a25 25 0 0 0 25-25V52" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round"/><rect x="46" y="34" width="36" height="20" rx="10" fill="#ff9a3d"/></svg>
+      Tuckfill
+    </a>
+    <span class="badge">0.6.0 beta</span>
+    <nav aria-label="Situs">
+      <a class="hide-s" href="#install">Panduan</a>
+      <a class="hide-s" href="#faq">FAQ</a>
+      <a class="hide-s" href="https://github.com/rmaw22/tuckfill-docs">GitHub</a>
+      <span class="lang"><a href="index.html" lang="en" hreflang="en" aria-label="English">EN</a><a class="on" href="#top" lang="id" aria-current="true" aria-label="Bahasa Indonesia">ID</a></span>
+      <a class="btn sm" href="https://github.com/rmaw22/tuckfill-docs/releases">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <h1>Ketik sekali.<br>Pakai terus.<br><em>Tetap aman.</em></h1>
+      <p class="lead">Tuckfill menyimpan teks yang sering kamu ketik di form, lalu mengisinya lewat tombol kecil di dalam field. Semuanya tersimpan terenkripsi di laptop kamu sendiri.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/rmaw22/tuckfill-docs/releases">Download versi beta</a>
+        <a class="btn" href="#install">Baca panduan</a>
+        <small>Dari GitHub Releases. Chrome, Edge, Brave, Arc 127+ · Firefox 140+ · Safari 26+</small>
+      </div>
+      <ul class="chips">
+        <li>Tanpa koneksi internet</li><li>Tanpa akun</li><li>54 KB (gzip)</li><li>Lisensi MIT</li>
+      </ul>
+    </div>
+    <div class="shot"><img src="images/hero.png" width="880" height="840" alt="Picker Tuckfill terbuka di bawah field Corporate ID, menawarkan set yang mengisi tiga field"></div>
+  </div>
+</div>
+
+<div class="features">
+  <h2 class="vh">Yang dilakukan Tuckfill</h2>
+  <div class="wrap">
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="3"/><path d="M16 12h.01"/></svg>
+      <h3>Tombol di dalam field</h3>
+      <p>Klik field, tekan tombol biru kecil, pilih entry. Tuckfill nggak pernah submit form, dan satu Undo mengembalikan semuanya.</p>
+    </div>
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      <h3>Set mengisi satu form</h3>
+      <p>Corporate ID, User ID, dan Password dalam sekali pilih. Tiap value masuk ke field yang labelnya cocok; nggak ada yang ditebak.</p>
+    </div>
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M20 10a8 8 0 0 0-14-4L4 10m0 4a8 8 0 0 0 14 4l2-4"/></svg>
+      <h3>Nilai baru setiap kali</h3>
+      <p><code>qa+{{random}}@acme.test</code> menghasilkan email baru tiap daftar akun. Tanggal, jam, dan UUID juga bisa.</p>
+    </div>
+    <div class="card">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <h3>Lokal dan terenkripsi</h3>
+      <p>AES-256 dengan kunci dari passphrase kamu. Tanpa server, cloud, atau sync. Cuma aktif di site yang kamu nyalakan.</p>
+    </div>
+  </div>
+</div>
+
+<nav class="pills" aria-label="Bagian"><div class="wrap">
+  <a href="#about">Ringkasan</a><a href="#install">Pasang</a><a href="#start">Mulai</a><a href="#site">Nyalakan di site</a><a href="#fill">Isi field</a><a href="#sets">Set</a><a href="#many">Banyak site &amp; entry</a><a href="#lock">Kunci &amp; backup</a><a href="#faq">FAQ</a><a href="#limits">Batasan</a><a href="#trouble">Kalau ada masalah</a><a href="#bug">Laporkan bug</a>
+</div></nav>
+
+<div class="wrap shell">
+  <nav class="side" aria-label="Panduan">
+    <p class="side-h">Panduan</p>
+    <a href="#about">Ringkasan</a>
+    <a href="#install">1. Pasang</a>
+    <a href="#start">2. Mulai</a>
+    <a href="#site">3. Nyalakan di site</a>
+    <a href="#fill">4. Isi field</a>
+    <a href="#sets">5. Set</a>
+    <a href="#many">6. Banyak site &amp; entry</a>
+    <a href="#lock">7. Kunci, PIN, Touch ID &amp; backup</a>
+    <p class="side-h">Bantuan</p>
+    <a href="#faq">FAQ</a>
+    <a href="#limits">Batasan</a>
+    <a href="#trouble">Kalau ada masalah</a>
+    <a href="#bug">Laporkan bug</a>
+  </nav>
+
+  <main class="doc" id="guide">
+    <section id="about">
+      <h2>Untuk apa Tuckfill</h2>
+      <p>Untuk siapa saja, orang IT maupun bukan, yang sering mengetik ulang teks yang sama ke form: QA yang mendaftar akun test berkali-kali, admin yang memasukkan data yang sama ke beberapa sistem, atau siapa pun yang bosan mengetik alamat dan template balasan.</p>
+      <ul>
+        <li><b>Yang disimpan:</b> teks biasa (email, alamat, template, nomor) dan data login (user ID, password, PIN), satu per satu atau sebagai <a href="#sets">set</a> yang mengisi beberapa field sekaligus.</li>
+        <li><b>Cara datanya dijaga:</b> semua entry dienkripsi di laptop kamu, dan Tuckfill sama sekali nggak membuat koneksi internet.</li>
+      </ul>
+      <h3>Yang nggak dilakukan Tuckfill</h3>
+      <ul>
+        <li>Bukan password generator. <code>{{random}}</code> cuma 6 angka untuk data test.</li>
+        <li>Belum ada sync: data cuma ada di browser ini. Pindah laptop lewat file backup.</li>
+        <li>Nggak bisa berbagi entry ke orang lain.</li>
+        <li>Nggak pernah menekan Submit. Kamu yang mengecek isian dan mengirim form.</li>
+      </ul>
+    </section>
+
+    <section id="install">
+      <h2><span class="n">1.</span>Pasang</h2>
+      <p>Versi beta belum ada di store browser, jadi dipasang dari file. Ambil filenya di halaman <a href="https://github.com/rmaw22/tuckfill-docs/releases">Releases</a>.</p>
+      <div class="tabs" role="tablist" aria-label="Browser">
+        <button role="tab" id="tab-chrome" aria-controls="panel-chrome" aria-selected="true" data-tab="chrome">Chrome</button>
+        <button role="tab" id="tab-firefox" aria-controls="panel-firefox" aria-selected="false" tabindex="-1" data-tab="firefox">Firefox</button>
+        <button role="tab" id="tab-safari" aria-controls="panel-safari" aria-selected="false" tabindex="-1" data-tab="safari">Safari</button>
+      </div>
+      <div role="tabpanel" id="panel-chrome" aria-labelledby="tab-chrome" data-panel="chrome">
+        <ol>
+          <li>Jalan di Chrome, Edge, Brave, dan Arc versi 127 ke atas. Unzip <code>tuckfill-&lt;versi&gt;.zip</code> ke folder yang <b>tetap</b>, misalnya <code>Documents/Tuckfill</code>. Jangan dihapus atau dipindah, karena browser menjalankan Tuckfill dari folder itu.</li>
+          <li>Buka <code>chrome://extensions</code>, lalu nyalakan <b>Developer mode</b> di pojok kanan atas.</li>
+          <li>Klik <b>Load unpacked</b>, lalu pilih folder tadi.</li>
+          <li>Klik ikon puzzle di toolbar, lalu pin <b>Tuckfill</b> supaya selalu kelihatan.</li>
+        </ol>
+        <figure><div class="shot"><img loading="lazy" src="images/install.jpg" width="1800" height="660" alt="chrome://extensions dengan Developer mode menyala dan kartu Tuckfill"></div></figure>
+        <p class="note"><b>Update ke versi baru:</b> timpa isi folder yang <b>sama</b> dengan isi zip baru, lalu klik ikon reload di kartu Tuckfill. Data kamu tetap ada. Jangan pasang dua Tuckfill sekaligus.</p>
+      </div>
+      <div role="tabpanel" id="panel-firefox" aria-labelledby="tab-firefox" data-panel="firefox" hidden>
+        <ol>
+          <li>Butuh Firefox 140 ke atas.</li>
+          <li>Buka <code>tuckfill-firefox-&lt;versi&gt;.xpi</code> di Firefox (drag ke jendelanya).</li>
+          <li>Klik <b>Add</b>. Tuckfill tetap terpasang walau Firefox ditutup.</li>
+        </ol>
+        <p class="note">File Firefox (<code>.xpi</code>) belum ada di halaman Releases. Touch ID belum bisa di Firefox; pakai PIN 6 angka.</p>
+      </div>
+      <div role="tabpanel" id="panel-safari" aria-labelledby="tab-safari" data-panel="safari" hidden>
+        <ol>
+          <li>Butuh Safari 26 ke atas. Unzip file zip ke folder yang tetap.</li>
+          <li>Safari → Settings → Advanced → centang <b>Show features for web developers</b>.</li>
+          <li>Tab <b>Developer</b> → centang <b>Allow unsigned extensions</b> → <b>Add Temporary Extension…</b> → pilih folder tadi.</li>
+          <li>Tab <b>Extensions</b> → pastikan Tuckfill tercentang.</li>
+        </ol>
+        <p class="note warn"><b>Perlu tahu:</b> Safari mencopot Tuckfill setiap kali ditutup (Cmd+Q), jadi ulangi langkah 3 setiap membuka Safari. Entry kamu tetap ada.</p>
+      </div>
+    </section>
+
+    <section id="start">
+      <h2><span class="n">2.</span>Mulai</h2>
+      <h3>Buat passphrase</h3>
+      <p>Klik ikon Tuckfill, lalu buat <b>passphrase</b> minimal 10 karakter. Passphrase ini yang mengunci semua entry kamu. Cukup dimasukkan sekali tiap browser dibuka; setelah laptop dikunci, cukup PIN 6 angka atau Touch ID (lihat <a href="#lock">Kunci, PIN, Touch ID &amp; backup</a>).</p>
+      <p class="note warn"><b>Ingat baik-baik.</b> Kalau lupa, data nggak bisa dipulihkan, oleh siapa pun.</p>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/setup.jpg" width="720" height="1080" alt="Layar setup Tuckfill: buat passphrase"></div></figure>
+      <h3>Tambah entry pertama</h3>
+      <p>Klik <b>Add</b> di checklist <b>Get started</b>, isi <b>Name</b> dan <b>Value</b>, lalu klik <b>Add entry</b>.</p>
+      <ul>
+        <li><b>Secret</b>: untuk password atau token. Disamarkan (••••), nggak bisa dicari, dan nggak bisa di-copy.</li>
+        <li><b>Only on this site</b>: entry cuma muncul di site yang sedang dibuka. Matikan kalau mau muncul di semua site. Bisa juga untuk beberapa site, port, atau <code>*.domain</code>: lihat <a href="#many">Banyak site &amp; entry</a>.</li>
+        <li><b>Group</b>: opsional, untuk mengelompokkan, misalnya "Staging ACME".</li>
+      </ul>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/add-single.jpg" width="720" height="1080" alt="Form Add entry dengan value qa+{{random}}@acme.test"></div></figure>
+      <h3>Nilai dinamis</h3>
+      <p>Tulis kode ini di dalam value, dan Tuckfill menggantinya setiap kali mengisi:</p>
+      <div class="tbl" tabindex="0" role="region" aria-label="Nilai dinamis"><table>
+        <tr><th>Tulis</th><th>Hasilnya</th><th>Contoh</th><th>Terisi jadi</th></tr>
+        <tr><td><code>{{random}}</code></td><td>6 angka acak</td><td><code>qa+{{random}}@acme.test</code></td><td><code>qa+481920@acme.test</code></td></tr>
+        <tr><td><code>{{date}}</code></td><td>tanggal hari ini</td><td><code>Order test {{date}}</code></td><td><code>Order test 2026-11-08</code></td></tr>
+        <tr><td><code>{{time}}</code></td><td>jam sekarang</td><td><code>Run {{time}}</code></td><td><code>Run 14:05</code></td></tr>
+        <tr><td><code>{{uuid}}</code></td><td>ID unik yang panjang</td><td><code>{{uuid}}</code></td><td><code>3f2b8c1e-…</code></td></tr>
+      </table></div>
+    </section>
+
+    <section id="site">
+      <h2><span class="n">3.</span>Nyalakan di sebuah site</h2>
+      <p>Tuckfill cuma aktif di site yang kamu pilih sendiri.</p>
+      <ol>
+        <li>Buka site yang mau diisi.</li>
+        <li>Klik ikon Tuckfill, lalu nyalakan switch di bagian atas (<b>Show the in-field button here</b>).</li>
+        <li>Browser akan minta izin untuk <b>site itu saja</b>. Klik <b>Allow</b>.</li>
+      </ol>
+      <p>Untuk mematikannya, matikan lagi switch yang sama. Semua site yang sudah nyala ada di Settings → <b>Sites</b>.</p>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/get-started.jpg" width="720" height="552" alt="Popup Tuckfill dengan switch site menyala dan checklist Get started"></div></figure>
+    </section>
+
+    <section id="fill">
+      <h2><span class="n">4.</span>Isi field</h2>
+      <ol>
+        <li>Klik field di site itu. Tombol biru kecil muncul di dalam field.</li>
+        <li>Klik tombolnya, lalu pilih entry. Bisa juga ketik untuk mencari, lalu tekan <kbd>Enter</kbd>.</li>
+        <li>Value-nya masuk ke field. Tuckfill <b>nggak pernah</b> submit form, jadi kamu bisa cek dulu. Salah pilih? Klik <b>Undo</b>.</li>
+      </ol>
+      <div class="row">
+        <figure><div class="shot"><img loading="lazy" src="images/field-button.jpg" width="880" height="536" alt="Field email dengan tombol biru Tuckfill"></div><figcaption>① Tombol di dalam field</figcaption></figure>
+        <figure><div class="shot"><img loading="lazy" src="images/picker.jpg" width="880" height="1040" alt="Picker Tuckfill terbuka di bawah field email"></div><figcaption>② Pilih entry</figcaption></figure>
+        <figure><div class="shot"><img loading="lazy" src="images/filled-single.jpg" width="880" height="632" alt="Field email terisi, dengan toast Undo"></div><figcaption>③ Terisi, dengan angka acak baru</figcaption></figure>
+      </div>
+      <p>Keyboard: klik field, lalu tekan <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> (Mac: <kbd>⌥ Option</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd>). Di picker, pakai <kbd>↑</kbd> <kbd>↓</kbd> dan <kbd>Enter</kbd>; <kbd>Esc</kbd> untuk menutup.</p>
+    </section>
+
+    <section id="sets">
+      <h2><span class="n">5.</span>Set: isi beberapa field sekaligus</h2>
+      <p>Untuk akun test yang terdiri dari beberapa value, misalnya Corporate ID + User ID + Password, buat satu <b>set</b>:</p>
+      <ol>
+        <li>Klik <b>Add entry</b>, lalu pilih <b>Set of fields</b>.</li>
+        <li>Beri nama tiap field <b>mirip label di form-nya</b> ("Email", "User ID", "No. HP", "Kata sandi"), lalu isi value-nya.</li>
+        <li>Tandai password sebagai <b>Secret</b>.</li>
+      </ol>
+      <p>Klik field <b>mana saja</b> di form itu, lalu pilih set-nya. Tiap value masuk ke field yang namanya cocok.</p>
+      <div class="row">
+        <figure><div class="shot"><img loading="lazy" src="images/picker-set.jpg" width="880" height="840" alt="Picker terbuka di field Corporate ID"></div><figcaption>Klik field mana saja, pilih set-nya</figcaption></figure>
+        <figure><div class="shot"><img loading="lazy" src="images/filled-set.jpg" width="880" height="800" alt="Tiga field terisi, dengan toast Filled 3 fields"></div><figcaption>Tiga field terisi sekaligus</figcaption></figure>
+      </div>
+      <ul>
+        <li>Value yang nggak ketemu field-nya <b>dilewati</b>, nggak ditebak. Toast-nya memberi tahu, misalnya "Filled 2 of 3, 1 not found".</li>
+        <li>Password cuma diisi ke field password.</li>
+        <li>Satu <b>Undo</b> mengembalikan semua field.</li>
+        <li>Dalam satu set, semua <code>{{random}}</code> memakai angka yang sama.</li>
+      </ul>
+    </section>
+
+    <section id="many">
+      <h2><span class="n">6.</span>Banyak site &amp; entry</h2>
+      <h3>Satu entry untuk beberapa site</h3>
+      <p>Di form entry, nyalakan <b>Only on this site</b>, lalu ketik site lain di <b>Add a site</b> dan tekan Enter.</p>
+      <div class="tbl" tabindex="0" role="region" aria-label="Pola site"><table>
+        <tr><th>Tulis</th><th>Muncul di</th></tr>
+        <tr><td><code>localhost</code></td><td>localhost di port mana pun</td></tr>
+        <tr><td><code>localhost:8080</code></td><td>cuma port 8080</td></tr>
+        <tr><td><code>*.staging.acme.test</code></td><td>staging.acme.test dan semua subdomain-nya</td></tr>
+      </table></div>
+      <ul>
+        <li>Boleh paste URL lengkap. Tuckfill cuma mengambil nama site-nya; http dan https dianggap sama.</li>
+        <li>Wildcard yang terlalu luas, misalnya <code>*.com</code> atau <code>*.co.id</code>, ditolak.</li>
+        <li>Untuk wildcard, klik <b>Allow</b> supaya tombol Tuckfill langsung menyala di semua subdomain-nya.</li>
+      </ul>
+      <h3>Kalau entry sudah banyak</h3>
+      <p>Lebih dari 15 entry, popup cuma menampilkan <b>This site</b> dan <b>Recent</b>. Sisanya ada di baris <b>N more in N groups</b>. <b>Search</b> mencari di semua entry, termasuk nama group dan site, dan bisa pakai inisial: <code>tpcm</code> menemukan "Test Payment Corp Maker". Isi Secret nggak pernah ikut dicari.</p>
+      <div class="row">
+        <figure class="pop"><div class="shot"><img loading="lazy" src="images/list-long.jpg" width="720" height="1080" alt="Popup dengan entry This site dan baris 14 more in 5 groups"></div></figure>
+        <figure class="pop"><div class="shot"><img loading="lazy" src="images/list-groups.jpg" width="720" height="1080" alt="Daftar group di popup dengan Manage all entries"></div></figure>
+      </div>
+      <h3>Halaman All entries</h3>
+      <p>Dari daftar group, klik <b>Manage all entries</b>. Di sana kamu bisa memindahkan beberapa entry ke group, mengatur site-nya, atau menghapusnya sekaligus, dan melihat semua site tempat Tuckfill menyala.</p>
+      <p class="note">Halaman ini menampilkan seluruh isi Tuckfill, jadi <b>selalu minta PIN, Touch ID, atau passphrase setiap kali dibuka</b>, walaupun popup sedang terbuka.</p>
+      <figure><div class="shot"><img loading="lazy" src="images/manage.jpg" width="1800" height="1120" alt="Halaman All entries: sidebar group, tabel entry, dua entry tercentang"></div></figure>
+    </section>
+
+    <section id="lock">
+      <h2><span class="n">7.</span>Kunci, PIN, Touch ID &amp; backup</h2>
+      <p>Semuanya ada di <b>Settings</b> (ikon slider di kanan atas popup).</p>
+      <figure class="pop"><div class="shot"><img loading="lazy" src="images/settings.jpg" width="720" height="1080" alt="Settings Tuckfill: PIN, kunci otomatis, nama saat terkunci, Backup"></div></figure>
+      <h3>Kunci otomatis</h3>
+      <p>Tuckfill ikut terkunci saat laptop dikunci atau sleep, setelah 1 jam laptop nggak disentuh, dan saat browser ditutup. Firefox dan Safari nggak tahu kapan laptop dikunci, jadi di sana Tuckfill terkunci setelah 15 menit. Mau pakai timer (5 menit sampai 4 jam)? Atur di Settings → Lock.</p>
+      <h3>PIN 6 angka</h3>
+      <p>Settings → Lock → <b>Set PIN</b>. Setelah laptop dikunci, cukup ketik PIN. Setelah browser dibuka ulang, tetap perlu passphrase atau Touch ID. Salah PIN 5 kali, Tuckfill terkunci penuh.</p>
+      <h3>Touch ID / Windows Hello</h3>
+      <p>Settings → Lock → <b>Unlock with Touch ID</b>. Simpan passkey-nya ke <b>iCloud Keychain</b> atau <b>Google Password Manager</b>, jangan ke "This Chrome profile". Passphrase tetap diminta tiap 2 minggu supaya nggak lupa. Di dalam halaman web, Touch ID cuma jalan di site https.</p>
+      <h3>Membuka kunci di dalam halaman</h3>
+      <p>Passphrase cuma diketik di Tuckfill sendiri, nggak pernah di dalam halaman web. Di picker cukup PIN atau Touch ID; kalau dua-duanya nggak bisa, picker menampilkan <b>Open Tuckfill</b>. Nama entry tetap kelihatan saat terkunci (isinya nggak). Nggak mau nama kelihatan? Matikan <b>Show entry names while locked</b>.</p>
+      <figure class="mid"><div class="shot"><img loading="lazy" src="images/picker-locked.jpg" width="880" height="1040" alt="Picker saat terkunci: klik nama entry, lalu masukkan PIN 6 angka"></div></figure>
+      <h3>Backup</h3>
+      <ul>
+        <li><b>Export</b> menyimpan file <code>.tuckfill</code> terenkripsi yang dibuka dengan passphrase yang sama. Lakukan rutin: ini satu-satunya cadangan kalau laptop rusak.</li>
+        <li><b>Import</b> menggabungkan file <code>.tuckfill</code> atau <code>.csv</code> tanpa menghapus entry yang sudah ada.</li>
+        <li>Di laptop baru, pilih <b>Restore from a backup</b> waktu setup.</li>
+        <li>Ada juga export ke CSV biasa, tapi file itu <b>nggak terenkripsi</b>.</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+      <details open>
+        <summary>Aman nggak? Datanya disimpan di mana?</summary>
+        <ul>
+          <li>Semua data tetap <b>di laptop kamu</b>, di dalam profil browser. Nggak ada akun, cloud, atau server: Tuckfill sama sekali nggak mengirim apa pun lewat internet.</li>
+          <li>Entry <b>dienkripsi</b> (AES-256) dengan kunci dari passphrase kamu (PBKDF2, 600.000 putaran). Passphrase-nya sendiri nggak pernah disimpan.</li>
+          <li>Situs web nggak bisa membaca entry kamu. Situs cuma dapat satu value yang kamu pilih untuk diisi.</li>
+          <li>Secret selalu disamarkan, nggak bisa dicari, dan nggak bisa di-copy.</li>
+          <li>Saat Tuckfill terbuka, orang yang memegang laptop kamu bisa memakainya, jadi kunci laptop kalau ditinggal (Tuckfill ikut terkunci).</li>
+          <li>Uninstall Tuckfill berarti datanya ikut terhapus. Simpan backup terenkripsi.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>Cara update ke beta yang baru?</summary>
+        <p>Timpa isi folder yang <b>sama</b> dengan isi zip baru, lalu klik ikon reload di kartu Tuckfill di <code>chrome://extensions</code>. Entry kamu tetap ada.</p>
+      </details>
+      <details>
+        <summary>Nanti setelah rilis resmi, masangnya gimana?</summary>
+        <p>Setelah Tuckfill ada di Chrome Web Store: klik <b>Add to Chrome</b>, selesai, dan update datang otomatis. Versi Store dianggap extension yang berbeda, jadi sebelum pindah, <b>Export backup</b> dulu dari versi beta, lalu <b>Restore from a backup</b> di versi baru.</p>
+      </details>
+      <details>
+        <summary>Lupa passphrase?</summary>
+        <p>Kalau Tuckfill masih terbuka, atau bisa dibuka pakai PIN atau Touch ID: Settings → <b>Change passphrase</b>, lalu konfirmasi pakai PIN atau Touch ID. Kalau sudah terkunci penuh dan nggak punya Touch ID, passphrase nggak bisa dipulihkan: pilih "Forgot passphrase?" untuk reset (semua entry terhapus), lalu restore dari backup kalau punya.</p>
+      </details>
+    </section>
+
+    <section id="limits">
+      <h2>Batasan</h2>
+      <ul>
+        <li>Maksimal <b>1.000 entry</b> (sekitar 3 MB). Satu value maksimal 5.000 karakter, nama entry 60 karakter, dan 2–12 field per set. File import maksimal 5 MB.</li>
+        <li>Belum bisa mengisi dropdown, checkbox, radio button, atau field di dalam iframe dari site lain.</li>
+        <li>Value yang diisi pasti terlihat oleh site itu (memang itu tujuannya), jadi isi hanya di site yang kamu percaya.</li>
+      </ul>
+    </section>
+
+    <section id="trouble">
+      <h2>Kalau ada masalah</h2>
+      <details>
+        <summary>Tombol nggak muncul di field</summary>
+        <p>Pastikan switch site di popup sudah menyala. Tuckfill cuma jalan di halaman http/https biasa, nggak di halaman <code>chrome://</code> atau Chrome Web Store.</p>
+      </details>
+      <details>
+        <summary>Switch site nggak bisa dimatikan</summary>
+        <p>Site itu menyala lewat wildcard, misalnya <code>*.acme.test</code>. Matikan wildcard-nya di Settings → Sites.</p>
+      </details>
+      <details>
+        <summary>Entry nggak muncul di site yang benar</summary>
+        <p>Cek site di entry itu. <code>localhost:8080</code> nggak muncul di <code>localhost:3000</code>; pakai <code>localhost</code> saja untuk semua port.</p>
+      </details>
+      <details>
+        <summary>"Tuckfill is hidden by this page, so it didn't fill"</summary>
+        <p>Halaman itu membuat Tuckfill transparan atau menutupinya, jadi Tuckfill menolak mengisi demi keamanan. Extension lain yang mengubah tampilan halaman (misalnya pengubah mode gelap) bisa juga jadi penyebabnya: coba matikan sebentar. Kalau terjadi di site yang kamu percaya, laporkan.</p>
+      </details>
+      <details>
+        <summary>Entry hilang setelah update</summary>
+        <p>Harusnya nggak, karena Tuckfill punya ID yang tetap di folder mana pun. Pastikan versi lama sudah <i>di-remove</i>, lalu buka popup lagi. Kalau masih kosong, restore dari backup dan laporkan.</p>
+      </details>
+    </section>
+
+    <section id="bug">
+      <h2>Laporkan bug</h2>
+      <ol>
+        <li>Buka Settings, scroll ke <b>About</b>, lalu klik <b>Copy</b>. Ini meng-copy versi Tuckfill, browser, dan OS, <b>tanpa</b> entry atau site kamu.</li>
+        <li>Buka <a href="https://github.com/rmaw22/tuckfill-docs/issues">issue</a> berisi: hasil Copy tadi, alamat site-nya, langkah yang kamu lakukan, apa yang seharusnya terjadi, apa yang terjadi, dan screenshot form-nya.</li>
+      </ol>
+      <p class="note warn"><b>Hati-hati:</b> jangan kirim password, isi entry, atau screenshot popup yang menampilkan entry kamu.</p>
+    </section>
+  </main>
+</div>
+
+<footer><div class="wrap">
+  <span>Tuckfill · Lisensi MIT · Screenshot memakai site demo dan data palsu.</span>
+  <span><a href="https://github.com/rmaw22/tuckfill-docs">GitHub</a> · <a href="https://github.com/rmaw22/tuckfill-docs/wiki">Wiki</a> · <a href="https://github.com/rmaw22/tuckfill-docs/releases">Releases</a></span>
+</div></footer>
+
+<script>
+  // Install tabs: arrow keys move between them.
+  const tabs = [...document.querySelectorAll('.tabs button')];
+  function pick(t, focus) {
+    tabs.forEach(x => { x.setAttribute('aria-selected', x === t); x.tabIndex = x === t ? 0 : -1; });
+    document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    if (focus) t.focus();
+  }
+  tabs.forEach((t, i) => {
+    t.onclick = () => pick(t);
+    t.onkeydown = e => {
+      const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (d) pick(tabs[(i + d + tabs.length) % tabs.length], true);
+    };
+  });
+  // Open on the visitor's own browser.
+  const ua = navigator.userAgent;
+  pick(tabs[/Firefox\//.test(ua) ? 1 : /Safari\//.test(ua) && !/Chrom/.test(ua) ? 2 : 0]);
+
+  // Highlight the section in view in the sidebar and the pills.
+  const links = [...document.querySelectorAll('.side a, .pills a')];
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => { const on = a.hash === '#' + e.target.id; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'); });
+    document.querySelector('.pills a.on')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }), { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('.doc section').forEach(s => spy.observe(s));
+</script>
+</body>
+</html>
