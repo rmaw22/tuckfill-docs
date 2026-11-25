@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> · <b>Bahasa Indonesia</b> · <a href="https://github.com/rmaw22/tuckfill-docs/wiki/Home-(ID)">Wiki</a>
+  <a href="README.md">English</a> · <b>Bahasa Indonesia</b> · <a href="https://github.com/rmaw22/tuckfill-docs/wiki/Home-(ID)">Wiki</a> · <a href="https://rmaw22.github.io/tuckfill-docs/id.html">Website</a>
 </p>
 
 <p align="center">
